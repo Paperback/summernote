@@ -20,6 +20,8 @@ define('settings', function () {
 
       codemirror: null,             // codemirror options
 
+      iframe: false,                // use iframe for contentEditable
+
       // language
       lang: 'en-US',                // language 'en-US', 'ko-KR', ...
       direction: null,              // text direction, ex) 'rtl'

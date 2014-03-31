@@ -1,12 +1,12 @@
 define([
-  'core/func', 'core/list', 'core/dom'
-], function (func, list, dom) {
+  'core/func', 'core/list', 'core/dom', 'core/document'
+], function (func, list, dom, documents) {
   /**
    * range module
    */
   var range = (function () {
     var bW3CRangeSupport = !!document.createRange;
-     
+    
     /**
      * return boundaryPoint from TextRange, inspired by Andy Na's HuskyRange.js
      * @param {TextRange} textRange
@@ -16,7 +16,7 @@ define([
     var textRange2bp = function (textRange, bStart) {
       var elCont = textRange.parentElement(), nOffset;
   
-      var tester = document.body.createTextRange(), elPrevCont;
+      var tester = documents.usingDocument.body.createTextRange(), elPrevCont;
       var aChild = list.from(elCont.childNodes);
       for (nOffset = 0; nOffset < aChild.length; nOffset++) {
         if (dom.isText(aChild[nOffset])) { continue; }
@@ -26,7 +26,7 @@ define([
       }
   
       if (nOffset !== 0 && dom.isText(aChild[nOffset - 1])) {
-        var textRangeStart = document.body.createTextRange(), elCurText = null;
+        var textRangeStart = documents.usingDocument.body.createTextRange(), elCurText = null;
         textRangeStart.moveToElementText(elPrevCont || elCont);
         textRangeStart.collapse(!elPrevCont);
         elCurText = elPrevCont ? elPrevCont.nextSibling : elCont.firstChild;
@@ -85,7 +85,7 @@ define([
         return {cont: elNode, collapseToStart: bCollapseToStart, offset: nOffset};
       };
   
-      var textRange = document.body.createTextRange();
+      var textRange = documents.usingDocument.body.createTextRange();
       var info = textRangeInfo(bp.cont, bp.offset);
   
       textRange.moveToElementText(info.cont);
@@ -111,7 +111,7 @@ define([
       // nativeRange: get nativeRange from sc, so, ec, eo
       var nativeRange = function () {
         if (bW3CRangeSupport) {
-          var w3cRange = document.createRange();
+          var w3cRange = documents.usingDocument.createRange();
           w3cRange.setStart(sc, so);
           w3cRange.setEnd(ec, eo);
           return w3cRange;
@@ -128,7 +128,7 @@ define([
       this.select = function () {
         var nativeRng = nativeRange();
         if (bW3CRangeSupport) {
-          var selection = document.getSelection();
+          var selection = documents.usingDocument.getSelection();
           if (selection.rangeCount > 0) { selection.removeAllRanges(); }
           selection.addRange(nativeRng);
         } else {
@@ -218,7 +218,7 @@ define([
       create : function (sc, so, ec, eo) {
         if (arguments.length === 0) { // from Browser Selection
           if (bW3CRangeSupport) { // webkit, firefox
-            var selection = document.getSelection();
+            var selection = documents.usingDocument.getSelection();
             if (selection.rangeCount === 0) { return null; }
   
             var nativeRng = selection.getRangeAt(0);
@@ -227,7 +227,7 @@ define([
             ec = nativeRng.endContainer;
             eo = nativeRng.endOffset;
           } else { // IE8: TextRange
-            var textRange = document.selection.createRange();
+            var textRange = documents.usingDocument.selection.createRange();
             var textRangeEnd = textRange.duplicate();
             textRangeEnd.collapse(false);
             var textRangeStart = textRange;

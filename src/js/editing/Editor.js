@@ -1,6 +1,6 @@
 define([
-  'core/agent', 'core/dom', 'core/range', 'core/async', 'editing/Style', 'editing/Table'
-], function (agent, dom, range, async, Style, Table) {
+  'core/agent', 'core/dom', 'core/range', 'core/async', 'core/document', 'editing/Style', 'editing/Table'
+], function (agent, dom, range, async, documents, Style, Table) {
   /**
    * Editor
    * @class
@@ -16,7 +16,7 @@ define([
      * @param {jQuery} $editable
      */
     this.saveRange = function ($editable) {
-      $editable.data('range', range.create());
+      $editable.data('range', range.create($editable));
     };
 
     /**
@@ -33,8 +33,8 @@ define([
      * current style
      * @param {Element} elTarget
      */
-    this.currentStyle = function (elTarget) {
-      var rng = range.create();
+    this.currentStyle = function ($editable, elTarget) {
+      var rng = range.create($editable);
       return rng.isOnEditable() && style.current(rng, elTarget);
     };
 
@@ -74,7 +74,7 @@ define([
       this[aCmd[idx]] = (function (sCmd) {
         return function ($editable, sValue) {
           recordUndo($editable);
-          document.execCommand(sCmd, false, sValue);
+          documents.usingDocument.execCommand(sCmd, false, sValue);
         };
       })(aCmd[idx]);
     }
@@ -102,7 +102,7 @@ define([
      * @param {Boolean} bShift
      */
     this.tab = function ($editable, options) {
-      var rng = range.create();
+      var rng = range.create($editable);
       if (rng.isCollapsed() && rng.isOnCell()) {
         table.tab(rng);
       } else {
@@ -113,8 +113,8 @@ define([
     /**
      * handle shift+tab key
      */
-    this.untab = function () {
-      var rng = range.create();
+    this.untab = function ($editable) {
+      var rng = range.create($editable);
       if (rng.isCollapsed() && rng.isOnCell()) {
         table.tab(rng, true);
       }
@@ -133,7 +133,7 @@ define([
           display: '',
           width: Math.min($editable.width(), $image.width())
         });
-        range.create().insertNode($image[0]);
+        range.create($editable).insertNode($image[0]);
       }).fail(function () {
         var callbacks = $editable.data('callbacks');
         if (callbacks.onImageUploadError) {
@@ -255,7 +255,7 @@ define([
      */
     this.lineHeight = function ($editable, sValue) {
       recordUndo($editable);
-      style.stylePara(range.create(), {lineHeight: sValue});
+      style.stylePara(range.create($editable), {lineHeight: sValue});
     };
 
     /**
@@ -263,7 +263,7 @@ define([
      * @param {jQuery} $editable
      */
     this.unlink = function ($editable) {
-      var rng = range.create();
+      var rng = range.create($editable);
       if (rng.isOnAnchor()) {
         recordUndo($editable);
         var elAnchor = dom.ancestor(rng.sc, dom.isAnchor);
@@ -281,7 +281,7 @@ define([
      * @param {Boolean} bNewWindow
      */
     this.createLink = function ($editable, sLinkUrl, bNewWindow) {
-      var rng = range.create();
+      var rng = range.create($editable);
       recordUndo($editable);
 
       // protocol
@@ -368,7 +368,7 @@ define([
     this.insertTable = function ($editable, sDim) {
       recordUndo($editable);
       var aDim = sDim.split('x');
-      range.create().insertNode(table.createTable(aDim[0], aDim[1]));
+      range.create($editable).insertNode(table.createTable(aDim[0], aDim[1]));
     };
 
     /**

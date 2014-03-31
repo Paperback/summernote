@@ -1,4 +1,4 @@
-define(['core/func', 'core/list', 'core/agent'], function (func, list, agent) {
+define(['core/func', 'core/list', 'core/agent', 'core/iframe'], function (func, list, agent, iframe) {
   /**
    * Dom functions
    */
@@ -226,7 +226,7 @@ define(['core/func', 'core/list', 'core/agent'], function (func, list, agent) {
     };
   
     var isText = makePredByNodeName('#text');
-  
+
     /**
      * returns #text's text size or element's childNodes size
      *
@@ -337,9 +337,40 @@ define(['core/func', 'core/list', 'core/agent'], function (func, list, agent) {
   
       elParent.removeChild(node);
     };
+
+    var setHtml = function ($node, html) {
+      if (dom.isTextarea($node[0])) { // textarea
+        $node.val(html);
+      } else if (dom.isIframe($node[0])) { // iframe
+        iframe.html($node, html);
+      } else {
+        $node.html(html);
+      }
+      return $node;
+    };
+
+    var getHtml = function ($node) {
+      if (dom.isTextarea($node[0])) { // from textarea
+        return $node.val();
+      } else if (dom.isIframe($node[0])) { // from iframe
+        return iframe.html($node);
+      } else {
+        return $node.html();
+      }
+    };
+
+    /**
+     * return or set html
+     * @param {jQuery} $node
+     * @param {String} [optional] html
+     */
   
-    var html = function ($node) {
-      return dom.isTextarea($node[0]) ? $node.val() : $node.html();
+    var html = function ($node, html) {
+      if (html === undefined) { // get html
+        return getHtml($node);
+      } else { // set html
+        return setHtml($node, html);
+      }
     };
   
     return {
@@ -363,6 +394,7 @@ define(['core/func', 'core/list', 'core/agent'], function (func, list, agent) {
       isI: makePredByNodeName('I'),
       isImg: makePredByNodeName('IMG'),
       isTextarea: makePredByNodeName('TEXTAREA'),
+      isIframe: makePredByNodeName('IFRAME'),
       ancestor: ancestor,
       listAncestor: listAncestor,
       listNext: listNext,

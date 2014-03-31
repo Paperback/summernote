@@ -1,10 +1,10 @@
 define([
   'CodeMirror',
-  'core/agent', 'core/dom', 'core/async', 'core/key',
+  'core/agent', 'core/dom', 'core/async', 'core/key', 'core/document',
   'editing/Style', 'editing/Editor', 'editing/History',
   'module/Toolbar', 'module/Popover', 'module/Handle', 'module/Dialog'
 ], function (CodeMirror,
-             agent, dom, async, key,
+             agent, dom, async, key, documents,
              Style, Editor, History,
              Toolbar, Popover, Handle, Dialog) {
   /**
@@ -60,7 +60,7 @@ define([
 
     var hToolbarAndPopoverUpdate = function (event) {
       var oLayoutInfo = makeLayoutInfo(event.currentTarget || event.target);
-      var oStyle = editor.currentStyle(event.target);
+      var oStyle = editor.currentStyle(oLayoutInfo.editor(), event.target);
       if (!oStyle) { return; }
       toolbar.update(oLayoutInfo.toolbar(), oStyle);
       popover.update(oLayoutInfo.popover(), oStyle);
@@ -225,7 +225,8 @@ define([
 
           var bCodeview = $editor.hasClass('codeview');
           if (bCodeview) {
-            $codable.val($editable.html());
+            $codable.val(dom.html($editable));
+            
             $codable.height($editable.height());
             toolbar.deactivate($toolbar);
             $codable.focus();
@@ -264,7 +265,7 @@ define([
               cmEditor.toTextArea();
             }
 
-            $editable.html($codable.val() || dom.emptyPara);
+            dom.html($editable, $codable.val() || dom.emptyPara);
             $editable.height(options.height ? $codable.height() : 'auto');
 
             toolbar.activate($toolbar);
@@ -352,7 +353,7 @@ define([
           $dropzoneMessage = oLayoutInfo.dropzone.find('.note-dropzone-message');
 
       // show dropzone on dragenter when dragging a object to document.
-      $(document).on('dragenter', function (e) {
+      $(documents.usingDocument).on('dragenter', function (e) {
         var bCodeview = oLayoutInfo.editor.hasClass('codeview');
         if (!bCodeview && collection.length === 0) {
           oLayoutInfo.editor.addClass('dragover');
@@ -471,7 +472,8 @@ define([
       if (options.styleWithSpan && !agent.bMSIE) {
         // protect FF Error: NS_ERROR_FAILURE: Failure
         setTimeout(function () {
-          document.execCommand('styleWithCSS', 0, true);
+          console.log(documents);
+          documents.usingDocument.execCommand('styleWithCSS', 0, true);
         });
       }
 

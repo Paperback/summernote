@@ -1,6 +1,6 @@
 define([
-  'core/agent', 'core/dom'
-], function (agent, dom) {
+  'core/agent', 'core/iframe', 'core/range', 'core/document', 'core/dom'
+], function (agent, iframe, range, documents, dom) {
   /**
    * renderer
    *
@@ -459,6 +459,54 @@ define([
     };
 
     /**
+     * create editable
+     *
+     * @param {jQuery} $holder
+     * @param {jQuery} $editor
+     * @param {Object} options
+     * @return {jQuery} $editable
+     */
+    var createEditable = function ($holder, $editor, options) {
+      var isContentEditable = !$holder.is(':disabled');
+      var $editable = $('<div class="note-editable" contentEditable="' + isContentEditable + '"></div>');
+      if (options.iframe) { // use iframe instead of div
+        $editable = $('<iframe class="note-editable" src="javascript:void(0);"></iframe>');
+      }
+
+      $editable.prependTo($editor);
+
+      if (options.height) {
+        $editable.height(options.height);
+      }
+      if (options.direction) {
+        $editable.attr('dir', options.direction);
+      }
+
+      if (options.iframe) {
+        $editable.load(function () { // setTimeout might be more appropiate here.
+          var $iframe = iframe.docEl($editable);
+          $iframe.html(dom.html($holder) || dom.emptyPara);
+          $iframe.find(iframe.contentEditableSelector).attr('contentEditable', isContentEditable);
+
+          // set document
+          console.log('here');
+          documents.setDocument($editable);
+        });
+      } else {
+        $editable.html(dom.html($holder) || dom.emptyPara);
+
+        // set document
+        console.log('here');
+        documents.setDocument($editable);
+      }
+
+
+
+      return $editable;
+    };
+
+
+    /**
      * create summernote layout
      *
      * @param {jQuery} $holder
@@ -481,17 +529,7 @@ define([
       }
 
       //03. create Editable
-      var isContentEditable = !$holder.is(':disabled');
-      var $editable = $('<div class="note-editable" contentEditable="' + isContentEditable + '"></div>')
-          .prependTo($editor);
-      if (options.height) {
-        $editable.height(options.height);
-      }
-      if (options.direction) {
-        $editable.attr('dir', options.direction);
-      }
-
-      $editable.html(dom.html($holder) || dom.emptyPara);
+      createEditable($holder, $editor, options);
 
       //031. create codable
       $('<textarea class="note-codable"></textarea>').prependTo($editor);
