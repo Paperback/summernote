@@ -489,14 +489,12 @@ define([
           $iframe.find(iframe.contentEditableSelector).attr('contentEditable', isContentEditable);
 
           // set document
-          console.log('here');
           documents.setDocument($editable);
         });
       } else {
         $editable.html(dom.html($holder) || dom.emptyPara);
 
         // set document
-        console.log('here');
         documents.setDocument($editable);
       }
 

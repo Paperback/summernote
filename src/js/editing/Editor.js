@@ -16,7 +16,7 @@ define([
      * @param {jQuery} $editable
      */
     this.saveRange = function ($editable) {
-      $editable.data('range', range.create($editable));
+      $editable.data('range', range.create());
     };
 
     /**
@@ -34,7 +34,7 @@ define([
      * @param {Element} elTarget
      */
     this.currentStyle = function ($editable, elTarget) {
-      var rng = range.create($editable);
+      var rng = range.create();
       return rng.isOnEditable() && style.current(rng, elTarget);
     };
 
@@ -102,7 +102,7 @@ define([
      * @param {Boolean} bShift
      */
     this.tab = function ($editable, options) {
-      var rng = range.create($editable);
+      var rng = range.create();
       if (rng.isCollapsed() && rng.isOnCell()) {
         table.tab(rng);
       } else {
@@ -113,8 +113,8 @@ define([
     /**
      * handle shift+tab key
      */
-    this.untab = function ($editable) {
-      var rng = range.create($editable);
+    this.untab = function () {
+      var rng = range.create();
       if (rng.isCollapsed() && rng.isOnCell()) {
         table.tab(rng, true);
       }
@@ -133,7 +133,7 @@ define([
           display: '',
           width: Math.min($editable.width(), $image.width())
         });
-        range.create($editable).insertNode($image[0]);
+        range.create().insertNode($image[0]);
       }).fail(function () {
         var callbacks = $editable.data('callbacks');
         if (callbacks.onImageUploadError) {
@@ -210,7 +210,7 @@ define([
     this.formatBlock = function ($editable, sTagName) {
       recordUndo($editable);
       sTagName = agent.bMSIE ? '<' + sTagName + '>' : sTagName;
-      document.execCommand('FormatBlock', false, sTagName);
+      documents.usingDocument.execCommand('FormatBlock', false, sTagName);
     };
 
     this.formatPara = function ($editable) {
@@ -236,7 +236,7 @@ define([
      */
     this.fontSize = function ($editable, sValue) {
       recordUndo($editable);
-      document.execCommand('fontSize', false, 3);
+      documents.usingDocument.execCommand('fontSize', false, 3);
       if (agent.bFF) {
         // firefox: <font size="3"> to <span style='font-size={sValue}px;'>, buggy
         $editable.find('font[size=3]').removeAttr('size').css('font-size', sValue + 'px');
@@ -255,7 +255,7 @@ define([
      */
     this.lineHeight = function ($editable, sValue) {
       recordUndo($editable);
-      style.stylePara(range.create($editable), {lineHeight: sValue});
+      style.stylePara(range.create(), {lineHeight: sValue});
     };
 
     /**
@@ -263,13 +263,13 @@ define([
      * @param {jQuery} $editable
      */
     this.unlink = function ($editable) {
-      var rng = range.create($editable);
+      var rng = range.create();
       if (rng.isOnAnchor()) {
         recordUndo($editable);
         var elAnchor = dom.ancestor(rng.sc, dom.isAnchor);
         rng = range.createFromNode(elAnchor);
         rng.select();
-        document.execCommand('unlink');
+        documents.usingDocument.execCommand('unlink');
       }
     };
 
@@ -281,7 +281,7 @@ define([
      * @param {Boolean} bNewWindow
      */
     this.createLink = function ($editable, sLinkUrl, bNewWindow) {
-      var rng = range.create($editable);
+      var rng = range.create();
       recordUndo($editable);
 
       // protocol
@@ -299,7 +299,7 @@ define([
         rng = range.createFromNode($anchor[0]);
         rng.select();
       } else {
-        document.execCommand('createlink', false, sLinkUrlWithProtocol);
+        documents.usingDocument.execCommand('createlink', false, sLinkUrlWithProtocol);
         rng = range.create();
       }
 
@@ -361,14 +361,14 @@ define([
       var foreColor = oColor.foreColor, backColor = oColor.backColor;
 
       recordUndo($editable);
-      if (foreColor) { document.execCommand('foreColor', false, foreColor); }
-      if (backColor) { document.execCommand('backColor', false, backColor); }
+      if (foreColor) { documents.usingDocument.execCommand('foreColor', false, foreColor); }
+      if (backColor) { documents.usingDocument.execCommand('backColor', false, backColor); }
     };
 
     this.insertTable = function ($editable, sDim) {
       recordUndo($editable);
       var aDim = sDim.split('x');
-      range.create($editable).insertNode(table.createTable(aDim[0], aDim[1]));
+      range.create().insertNode(table.createTable(aDim[0], aDim[1]));
     };
 
     /**

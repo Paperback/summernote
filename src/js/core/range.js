@@ -6,7 +6,7 @@ define([
    */
   var range = (function () {
     var bW3CRangeSupport = !!document.createRange;
-    
+     
     /**
      * return boundaryPoint from TextRange, inspired by Andy Na's HuskyRange.js
      * @param {TextRange} textRange
@@ -16,7 +16,7 @@ define([
     var textRange2bp = function (textRange, bStart) {
       var elCont = textRange.parentElement(), nOffset;
   
-      var tester = documents.usingDocument.body.createTextRange(), elPrevCont;
+      var tester = document.body.createTextRange(), elPrevCont;
       var aChild = list.from(elCont.childNodes);
       for (nOffset = 0; nOffset < aChild.length; nOffset++) {
         if (dom.isText(aChild[nOffset])) { continue; }
@@ -26,7 +26,7 @@ define([
       }
   
       if (nOffset !== 0 && dom.isText(aChild[nOffset - 1])) {
-        var textRangeStart = documents.usingDocument.body.createTextRange(), elCurText = null;
+        var textRangeStart = document.body.createTextRange(), elCurText = null;
         textRangeStart.moveToElementText(elPrevCont || elCont);
         textRangeStart.collapse(!elPrevCont);
         elCurText = elPrevCont ? elPrevCont.nextSibling : elCont.firstChild;
@@ -85,7 +85,7 @@ define([
         return {cont: elNode, collapseToStart: bCollapseToStart, offset: nOffset};
       };
   
-      var textRange = documents.usingDocument.body.createTextRange();
+      var textRange = document.body.createTextRange();
       var info = textRangeInfo(bp.cont, bp.offset);
   
       textRange.moveToElementText(info.cont);
@@ -218,6 +218,7 @@ define([
       create : function (sc, so, ec, eo) {
         if (arguments.length === 0) { // from Browser Selection
           if (bW3CRangeSupport) { // webkit, firefox
+
             var selection = documents.usingDocument.getSelection();
             if (selection.rangeCount === 0) { return null; }
   

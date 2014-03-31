@@ -470,11 +470,18 @@ define([
 
       // ret styleWithCSS for backColor / foreColor clearing with 'inherit'.
       if (options.styleWithSpan && !agent.bMSIE) {
-        // protect FF Error: NS_ERROR_FAILURE: Failure
-        setTimeout(function () {
-          console.log(documents);
-          documents.usingDocument.execCommand('styleWithCSS', 0, true);
-        });
+        // protect FF Error: NS_ERROR_FAILURE: Failure))
+        if (dom.isIframe(oLayoutInfo.editable[0])) {
+          oLayoutInfo.editable.load(function () {
+            setTimeout(function () {
+              documents.usingDocument.execCommand('styleWithCSS', 0, true);
+            });
+          });
+        } else {
+          setTimeout(function () {
+            document.execCommand('styleWithCSS', 0, true);
+          });
+        }
       }
 
       // History

@@ -6,7 +6,7 @@ define(['core/agent'], function (agent) {
 
     var usingDoctype = true; // display doctype in html
     var usingEntireDocument = true; // display entire html document in html - otherwise just show body contents
-    var contentEditableSelector = 'body'; // set contentEditable to true on these selectors inside iframe
+    var contentEditableSelector = 'p'; // set contentEditable to true on these selectors inside iframe
     var injectHtml = ''; // inject this html into the head (mainly for styling)
   
     /**
@@ -17,9 +17,9 @@ define(['core/agent'], function (agent) {
 
     var doc = function ($iframe) {
       if (agent.bMSIE) {
-        return $iframe[0].contentWindow.document;
+        return $iframe.get(0).contentWindow.document;
       } else {
-        return $iframe[0].contentDocument;
+        return $iframe.get(0).contentDocument;
       }
     };
 
@@ -87,7 +87,6 @@ define(['core/agent'], function (agent) {
         $iframeDoc.find('[contentEditable="true"]').removeAttr('contentEditable'); //remove contenteditable
         $iframeDoc.find('.summernote-injected').remove(); //remove injected
         html = '<html>' + $iframeDoc.html() + '</html>';
-        console.log($iframeDoc);
       } else {
         html = $iframeDoc.find('body').html();
       }
