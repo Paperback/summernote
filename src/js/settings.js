@@ -20,7 +20,7 @@ define('settings', function () {
 
       codemirror: null,             // codemirror options
 
-      iframe: false,                // use iframe for contentEditable
+      iframe: false,                // use iframe for .note-editable
 
       // language
       lang: 'en-US',                // language 'en-US', 'ko-KR', ...

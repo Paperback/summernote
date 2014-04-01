@@ -16,7 +16,7 @@ define([
     var textRange2bp = function (textRange, bStart) {
       var elCont = textRange.parentElement(), nOffset;
   
-      var tester = document.body.createTextRange(), elPrevCont;
+      var tester = documents.usingDocument.body.createTextRange(), elPrevCont;
       var aChild = list.from(elCont.childNodes);
       for (nOffset = 0; nOffset < aChild.length; nOffset++) {
         if (dom.isText(aChild[nOffset])) { continue; }
@@ -26,7 +26,7 @@ define([
       }
   
       if (nOffset !== 0 && dom.isText(aChild[nOffset - 1])) {
-        var textRangeStart = document.body.createTextRange(), elCurText = null;
+        var textRangeStart = documents.usingDocument.body.createTextRange(), elCurText = null;
         textRangeStart.moveToElementText(elPrevCont || elCont);
         textRangeStart.collapse(!elPrevCont);
         elCurText = elPrevCont ? elPrevCont.nextSibling : elCont.firstChild;
@@ -85,7 +85,7 @@ define([
         return {cont: elNode, collapseToStart: bCollapseToStart, offset: nOffset};
       };
   
-      var textRange = document.body.createTextRange();
+      var textRange = documents.usingDocument.body.createTextRange();
       var info = textRangeInfo(bp.cont, bp.offset);
   
       textRange.moveToElementText(info.cont);
@@ -170,6 +170,8 @@ define([
   
       // isOnEditable: judge whether range is on editable or not
       this.isOnEditable = makeIsOn(dom.isEditable);
+      // isOnIframe: judge whether range is on editable or not
+      this.isOnIframe = makeIsOn(dom.isIframe);
       // isOnList: judge whether range is on list node or not
       this.isOnList = makeIsOn(dom.isList);
       // isOnAnchor: judge whether range is on anchor node or not

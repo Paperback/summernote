@@ -482,11 +482,13 @@ define([
         $editable.attr('dir', options.direction);
       }
 
-      if (options.iframe) {
+
+      if (options.iframe) { // use iframe
         $editable.load(function () { // setTimeout might be more appropiate here.
           var $iframe = iframe.docEl($editable);
+          options.iframe = iframe.setup($editable, options.iframe);
           $iframe.html(dom.html($holder) || dom.emptyPara);
-          $iframe.find(iframe.contentEditableSelector).attr('contentEditable', isContentEditable);
+          $iframe.find(options.iframe.editableSelector).attr('contentEditable', isContentEditable);
 
           // set document
           documents.setDocument($editable);
@@ -502,7 +504,6 @@ define([
 
       return $editable;
     };
-
 
     /**
      * create summernote layout

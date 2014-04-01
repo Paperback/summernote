@@ -1,7 +1,8 @@
 define([
   'core/agent',
-  'core/dom'
-], function (agent, dom) {
+  'core/dom',
+  'core/document'
+], function (agent, dom, documents) {
   /**
    * Style
    * @class
@@ -54,9 +55,9 @@ define([
       oStyle['font-size'] = parseInt(oStyle['font-size']);
 
       // document.queryCommandState for toggle state
-      oStyle['font-bold'] = document.queryCommandState('bold') ? 'bold' : 'normal';
-      oStyle['font-italic'] = document.queryCommandState('italic') ? 'italic' : 'normal';
-      oStyle['font-underline'] = document.queryCommandState('underline') ? 'underline' : 'normal';
+      oStyle['font-bold'] = documents.usingDocument.queryCommandState('bold') ? 'bold' : 'normal';
+      oStyle['font-italic'] = documents.usingDocument.queryCommandState('italic') ? 'italic' : 'normal';
+      oStyle['font-underline'] = documents.usingDocument.queryCommandState('underline') ? 'underline' : 'normal';
 
       // list-style-type to list-style(unordered, ordered)
       if (!rng.isOnList()) {

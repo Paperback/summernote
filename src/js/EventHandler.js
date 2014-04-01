@@ -438,6 +438,19 @@ define([
       var keyMap = options.keyMap[agent.bMac ? 'mac' : 'pc'];
       this.bindKeyMap(oLayoutInfo, keyMap);
 
+      if (options.iframe) { // trigger iframe events back to editable
+        var listener = $(oLayoutInfo.editable.contents().get(0).documentElement);
+        listener.on('mousedown', function () {
+          oLayoutInfo.editable.trigger('mousedown');
+        });
+        listener.on('keyup mouseup', function () {
+          oLayoutInfo.editable.trigger('keyup').trigger('mouseup');
+        });
+        listener.on('scroll', function () {
+          oLayoutInfo.editable.trigger('scroll');
+        });
+      }
+
       oLayoutInfo.editable.on('mousedown', hMousedown);
       oLayoutInfo.editable.on('keyup mouseup', hToolbarAndPopoverUpdate);
       oLayoutInfo.editable.on('scroll', hScroll);

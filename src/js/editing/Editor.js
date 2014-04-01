@@ -35,7 +35,7 @@ define([
      */
     this.currentStyle = function ($editable, elTarget) {
       var rng = range.create();
-      return rng.isOnEditable() && style.current(rng, elTarget);
+      return (rng.isOnEditable() || rng.isOnIframe) && style.current(rng, elTarget);
     };
 
     /**
