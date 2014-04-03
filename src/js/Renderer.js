@@ -485,13 +485,11 @@ define([
 
       if (options.iframe) { // use iframe
         $editable.load(function () { // setTimeout might be more appropiate here.
-          var $iframe = iframe.docEl($editable);
           options.iframe = iframe.setup($editable, options.iframe);
-          $iframe.html(dom.html($holder) || dom.emptyPara);
-          $iframe.find(options.iframe.editableSelector).attr('contentEditable', isContentEditable);
+          documents.setDocument($editable); // set documen
 
-          // set document
-          documents.setDocument($editable);
+          $editable.contents().find('html').get(0).innerHTML = dom.html($holder) || dom.emptyPara;
+          $editable.contents().find(options.iframe.editableSelector).attr('contentEditable', isContentEditable);
         });
       } else {
         $editable.html(dom.html($holder) || dom.emptyPara);
@@ -499,8 +497,6 @@ define([
         // set document
         documents.setDocument($editable);
       }
-
-
 
       return $editable;
     };

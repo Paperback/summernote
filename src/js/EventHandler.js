@@ -352,8 +352,20 @@ define([
       var collection = $(), $dropzone = oLayoutInfo.dropzone,
           $dropzoneMessage = oLayoutInfo.dropzone.find('.note-dropzone-message');
 
+      if (dom.isIframe(oLayoutInfo.editable)) {
+        var listener = $(oLayoutInfo.editable.contents().get(0).documentElement);
+        listener.on('dragenter', function () {
+          $(document).trigger('dragenter');
+        }).on('dragleave', function () {
+          $(document).trigger('dragleave');
+          console.log('here');
+        }).on('drop', function () {
+          $(document).trigger('drop');
+        });
+      }
+
       // show dropzone on dragenter when dragging a object to document.
-      $(documents.usingDocument).on('dragenter', function (e) {
+      $(document).on('dragenter', function (e) {
         var bCodeview = oLayoutInfo.editor.hasClass('codeview');
         if (!bCodeview && collection.length === 0) {
           oLayoutInfo.editor.addClass('dragover');
@@ -403,6 +415,13 @@ define([
     this.bindKeyMap = function (oLayoutInfo, keyMap) {
       var $editor = oLayoutInfo.editor;
       var $editable = oLayoutInfo.editable;
+
+      if (dom.isIframe($editable)) {
+        $(oLayoutInfo.editable.contents().get(0).documentElement).on('keydown', function (event)
+        {
+          $editable.trigger('keydown', event);
+        });
+      }
 
       $editable.on('keydown', function (event) {
         var aKey = [];

@@ -37,24 +37,24 @@ define(['settings', 'core/agent'], function (settings, agent) {
     var docType = function ($iframe) {
       var iframeDoc = doc($iframe);
  
-      if (iframeDoc.doctype === null) {
+      if (!iframeDoc.doctype) {
         return ''; // no doctype
       } else {
         var aDoctype = [];
 
         // recreate doctype (there must be a better way to do this?)
         aDoctype.push('<!DOCTYPE ');
-        if (iframeDoc.docType.name) {
-          aDoctype.push(iframeDoc.docType.name);
+        if (iframeDoc.doctype.name) {
+          aDoctype.push(iframeDoc.doctype.name);
         }
-        if (iframeDoc.docType.publicId) {
-          aDoctype.push(' PUBLIC "' + iframeDoc.docType.publicId + '"');
+        if (iframeDoc.doctype.publicId) {
+          aDoctype.push(' PUBLIC "' + iframeDoc.doctype.publicId + '"');
         }
-        if (!iframeDoc.docType.publicId && iframeDoc.docType.systemId) {
+        if (!iframeDoc.doctype.publicId && iframeDoc.doctype.systemId) {
           aDoctype.push(' SYSTEM');
         }
-        if (iframeDoc.docType.systemId) {
-          aDoctype.push(' "' + iframeDoc.docType.systemId + '"');
+        if (iframeDoc.doctype.systemId) {
+          aDoctype.push(' "' + iframeDoc.doctype.systemId + '"');
         }
         aDoctype.push('>');
 
@@ -63,31 +63,29 @@ define(['settings', 'core/agent'], function (settings, agent) {
     };
 
     var setHtml = function ($iframe, html) {
-      $iframe.contents().find('html').html(html);
+      $iframe.contents().find('html').get(0).innerHTML = html;
       $iframe.contents().find('head').append($iframe.data('options').injectHtml);
       $iframe.contents().find($iframe.data('options').editableSelector).attr('contentEditable', 'true');
       return $iframe;
     };
 
     var getHtml = function ($iframe) {
-      var $iframeDoc = docEl($iframe);
       var doctype = '';
       var html = '';
 
       if ($iframe.data('options').onlyBody) {
-        html = $iframeDoc.find('body').html();
+        html = $iframe.contents().find('body').html();
       } else {
         doctype = docType($iframe);
-        $iframeDoc.find('[contentEditable="true"]').removeAttr('contentEditable'); //remove contenteditable
-        $iframeDoc.find('.summernote-injected').remove(); //remove injected
-        html = '<html>' + $iframeDoc.html() + '</html>';
+        $iframe.contents().find('[contentEditable="true"]').removeAttr('contentEditable'); //remove contenteditable
+        $iframe.contents().find('.summernote-injected').remove(); //remove injected
+        html = '<html>' + $iframe.contents().find('html').get(0).innerHTML + '</html>';
       }
-
       return doctype + html;
     };
 
     /**
-     * get entire html contents from iframe
+     * get/set entire html contents for iframe
      * @param {jQuery} editable iframe
      * @return {String} html of iframe
      */
@@ -99,6 +97,12 @@ define(['settings', 'core/agent'], function (settings, agent) {
         return setHtml($iframe, html);
       }
     };
+
+    /**
+     * pass summernote iframe options, convert into object if needed
+     * @param {jQuery} editable iframe
+     * @param {Object} options.iframe from settings 
+     */
 
     var setup = function ($iframe, options) {
       var defaults = {
