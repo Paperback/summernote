@@ -468,6 +468,7 @@ define([
      */
     var createEditable = function ($holder, $editor, options) {
       var isContentEditable = !$holder.is(':disabled');
+      var holderHtml = dom.html($holder).trim() || dom.emptyPara;
       var $editable = $('<div class="note-editable" contentEditable="' + isContentEditable + '"></div>');
       if (options.iframe) { // use iframe instead of div
         $editable = $('<iframe class="note-editable" src="javascript:void(0);"></iframe>');
@@ -482,17 +483,19 @@ define([
         $editable.attr('dir', options.direction);
       }
 
+      
 
       if (options.iframe) { // use iframe
-        $editable.load(function () { // setTimeout might be more appropiate here.
+        $editable.load(function () {
           options.iframe = iframe.setup($editable, options.iframe);
-          documents.setDocument($editable); // set documen
-
-          $editable.contents().find('html').get(0).innerHTML = dom.html($holder) || dom.emptyPara;
+          iframe.doc($editable).write(holderHtml);
           $editable.contents().find(options.iframe.editableSelector).attr('contentEditable', isContentEditable);
+
+          // set document
+          documents.setDocument($editable);
         });
       } else {
-        $editable.html(dom.html($holder) || dom.emptyPara);
+        $editable.html(holderHtml);
 
         // set document
         documents.setDocument($editable);

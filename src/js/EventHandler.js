@@ -358,7 +358,6 @@ define([
           $(document).trigger('dragenter');
         }).on('dragleave', function () {
           $(document).trigger('dragleave');
-          console.log('here');
         }).on('drop', function () {
           $(document).trigger('drop');
         });

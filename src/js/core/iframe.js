@@ -35,31 +35,20 @@ define(['settings', 'core/agent'], function (settings, agent) {
      */
 
     var docType = function ($iframe) {
-      var iframeDoc = doc($iframe);
- 
-      if (!iframeDoc.doctype) {
-        return ''; // no doctype
-      } else {
-        var aDoctype = [];
+      var doctype = doc($iframe).doctype;
 
-        // recreate doctype (there must be a better way to do this?)
-        aDoctype.push('<!DOCTYPE ');
-        if (iframeDoc.doctype.name) {
-          aDoctype.push(iframeDoc.doctype.name);
-        }
-        if (iframeDoc.doctype.publicId) {
-          aDoctype.push(' PUBLIC "' + iframeDoc.doctype.publicId + '"');
-        }
-        if (!iframeDoc.doctype.publicId && iframeDoc.doctype.systemId) {
-          aDoctype.push(' SYSTEM');
-        }
-        if (iframeDoc.doctype.systemId) {
-          aDoctype.push(' "' + iframeDoc.doctype.systemId + '"');
-        }
-        aDoctype.push('>');
+      if (!!doctype) {
+        var start = '<!DOCTYPE ';
+        var name = doctype.name;
+        var publicId = (doctype.publicId ? ' PUBLIC "' + doctype.publicId + '"' : '');
+        var systemId = (!doctype.publicId && doctype.systemId ? ' SYSTEM' : '');
+        var endId = (doctype.systemId ? ' "' + doctype.systemId + '"' : '');
+        var end = '>';
 
-        return aDoctype.join();
+        return start + name + publicId + systemId + endId + end;
       }
+
+      return ''; // empty or no doctype
     };
 
     var setHtml = function ($iframe, html) {
