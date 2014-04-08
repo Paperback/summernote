@@ -1,7 +1,5 @@
-define(['settings', 'core/agent'], function (settings, agent) {
-  /**
-   * Iframe functions
-   */
+define([], function () {
+
   var iframe = (function () {
 
     /**
@@ -11,10 +9,10 @@ define(['settings', 'core/agent'], function (settings, agent) {
      */
 
     var doc = function ($iframe) {
-      if (agent.bMSIE) {
-        return $iframe[0].contentWindow.document;
-      } else {
+      if ($iframe[0].contentDocument) {
         return $iframe[0].contentDocument;
+      } else {
+        return $iframe[0].contentWindow.document;
       }
     };
 

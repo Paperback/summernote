@@ -471,7 +471,7 @@ define([
       var holderHtml = dom.html($holder).trim() || dom.emptyPara;
       var $editable = $('<div class="note-editable" contentEditable="' + isContentEditable + '"></div>');
       if (options.iframe) { // use iframe instead of div
-        $editable = $('<iframe class="note-editable" src="javascript:void(0);"></iframe>');
+        $editable = $('<iframe class="note-editable"></iframe>');
       }
 
       $editable.prependTo($editor);
@@ -482,8 +482,6 @@ define([
       if (options.direction) {
         $editable.attr('dir', options.direction);
       }
-
-      
 
       if (options.iframe) { // use iframe
         $editable.load(function () {
