@@ -34,9 +34,9 @@ define([
      * current style
      * @param {Element} elTarget
      */
-    this.currentStyle = function (elTarget) {
+    this.currentStyle = function ($editable, elTarget) {
       var rng = range.create();
-      return rng.isOnEditable() && style.current(rng, elTarget);
+      return (rng.isOnEditable() || rng.isOnIframe) && style.current(rng, elTarget);
     };
 
     /**
@@ -75,7 +75,7 @@ define([
       this[aCmd[idx]] = (function (sCmd) {
         return function ($editable, sValue) {
           recordUndo($editable);
-          document.execCommand(sCmd, false, sValue);
+          documents.usingDocument.execCommand(sCmd, false, sValue);
         };
       })(aCmd[idx]);
     }
@@ -211,7 +211,7 @@ define([
     this.formatBlock = function ($editable, sTagName) {
       recordUndo($editable);
       sTagName = agent.bMSIE ? '<' + sTagName + '>' : sTagName;
-      document.execCommand('FormatBlock', false, sTagName);
+      documents.usingDocument.execCommand('FormatBlock', false, sTagName);
     };
 
     this.formatPara = function ($editable) {
@@ -237,7 +237,7 @@ define([
      */
     this.fontSize = function ($editable, sValue) {
       recordUndo($editable);
-      document.execCommand('fontSize', false, 3);
+      documents.usingDocument.execCommand('fontSize', false, 3);
       if (agent.bFF) {
         // firefox: <font size="3"> to <span style='font-size={sValue}px;'>, buggy
         $editable.find('font[size=3]').removeAttr('size').css('font-size', sValue + 'px');
@@ -270,7 +270,7 @@ define([
         var elAnchor = dom.ancestor(rng.sc, dom.isAnchor);
         rng = range.createFromNode(elAnchor);
         rng.select();
-        document.execCommand('unlink');
+        documents.usingDocument.execCommand('unlink');
       }
     };
 
@@ -300,7 +300,7 @@ define([
         rng = range.createFromNode($anchor[0]);
         rng.select();
       } else {
-        document.execCommand('createlink', false, sLinkUrlWithProtocol);
+        documents.usingDocument.execCommand('createlink', false, sLinkUrlWithProtocol);
         rng = range.create();
       }
 
@@ -362,8 +362,8 @@ define([
       var foreColor = oColor.foreColor, backColor = oColor.backColor;
 
       recordUndo($editable);
-      if (foreColor) { document.execCommand('foreColor', false, foreColor); }
-      if (backColor) { document.execCommand('backColor', false, backColor); }
+      if (foreColor) { documents.usingDocument.execCommand('foreColor', false, foreColor); }
+      if (backColor) { documents.usingDocument.execCommand('backColor', false, backColor); }
     };
 
     this.insertTable = function ($editable, sDim) {

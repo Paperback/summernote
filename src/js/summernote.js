@@ -76,7 +76,8 @@ define([
           if (bCodeview && agent.bCodeMirror) {
             info.codable.data('cmEditor').save();
           }
-          return bCodeview ? info.codable.val() : info.editable.html();
+          
+          return bCodeview ? info.codable.val() : dom.html(info.editable);
         }
         return $holder.html();
       }

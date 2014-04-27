@@ -37,7 +37,7 @@ define('summernote/core/async', function () {
           deferred.reject($(this));
         }).css({
           display: 'none'
-        }).appendTo(document.body).attr('src', sUrl);
+        }).appendTo(documents.usingDocument.body).attr('src', sUrl);
       }).promise();
     };
 

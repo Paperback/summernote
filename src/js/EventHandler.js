@@ -60,7 +60,7 @@ define([
 
     var hToolbarAndPopoverUpdate = function (event) {
       var oLayoutInfo = makeLayoutInfo(event.currentTarget || event.target);
-      var oStyle = editor.currentStyle(event.target);
+      var oStyle = editor.currentStyle(oLayoutInfo.editor(), event.target);
       if (!oStyle) { return; }
       toolbar.update(oLayoutInfo.toolbar(), oStyle);
       popover.update(oLayoutInfo.popover(), oStyle);
@@ -225,7 +225,8 @@ define([
 
           var bCodeview = $editor.hasClass('codeview');
           if (bCodeview) {
-            $codable.val($editable.html());
+            $codable.val(dom.html($editable));
+            
             $codable.height($editable.height());
             toolbar.deactivate($toolbar);
             $codable.focus();
@@ -264,7 +265,7 @@ define([
               cmEditor.toTextArea();
             }
 
-            $editable.html($codable.val() || dom.emptyPara);
+            dom.html($editable, $codable.val() || dom.emptyPara);
             $editable.height(options.height ? $codable.height() : 'auto');
 
             toolbar.activate($toolbar);
@@ -351,6 +352,17 @@ define([
       var collection = $(), $dropzone = oLayoutInfo.dropzone,
           $dropzoneMessage = oLayoutInfo.dropzone.find('.note-dropzone-message');
 
+      if (dom.isIframe(oLayoutInfo.editable)) {
+        var listener = $(oLayoutInfo.editable.contents().get(0).documentElement);
+        listener.on('dragenter', function () {
+          $(document).trigger('dragenter');
+        }).on('dragleave', function () {
+          $(document).trigger('dragleave');
+        }).on('drop', function () {
+          $(document).trigger('drop');
+        });
+      }
+
       // show dropzone on dragenter when dragging a object to document.
       $(document).on('dragenter', function (e) {
         var bCodeview = oLayoutInfo.editor.hasClass('codeview');
@@ -403,6 +415,13 @@ define([
       var $editor = oLayoutInfo.editor;
       var $editable = oLayoutInfo.editable;
 
+      if (dom.isIframe($editable)) {
+        $(oLayoutInfo.editable.contents().get(0).documentElement).on('keydown', function (event)
+        {
+          $editable.trigger('keydown', event);
+        });
+      }
+
       $editable.on('keydown', function (event) {
         var aKey = [];
 
@@ -437,6 +456,19 @@ define([
       var keyMap = options.keyMap[agent.bMac ? 'mac' : 'pc'];
       this.bindKeyMap(oLayoutInfo, keyMap);
 
+      if (options.iframe) { // trigger iframe events back to editable
+        var listener = $(oLayoutInfo.editable.contents().get(0).documentElement);
+        listener.on('mousedown', function () {
+          oLayoutInfo.editable.trigger('mousedown');
+        });
+        listener.on('keyup mouseup', function () {
+          oLayoutInfo.editable.trigger('keyup').trigger('mouseup');
+        });
+        listener.on('scroll', function () {
+          oLayoutInfo.editable.trigger('scroll');
+        });
+      }
+
       oLayoutInfo.editable.on('mousedown', hMousedown);
       oLayoutInfo.editable.on('keyup mouseup', hToolbarAndPopoverUpdate);
       oLayoutInfo.editable.on('scroll', hScroll);
@@ -469,10 +501,18 @@ define([
 
       // ret styleWithCSS for backColor / foreColor clearing with 'inherit'.
       if (options.styleWithSpan && !agent.bMSIE) {
-        // protect FF Error: NS_ERROR_FAILURE: Failure
-        setTimeout(function () {
-          document.execCommand('styleWithCSS', 0, true);
-        });
+        // protect FF Error: NS_ERROR_FAILURE: Failure))
+        if (dom.isIframe(oLayoutInfo.editable[0])) {
+          oLayoutInfo.editable.load(function () {
+            setTimeout(function () {
+              documents.usingDocument.execCommand('styleWithCSS', 0, true);
+            });
+          });
+        } else {
+          setTimeout(function () {
+            document.execCommand('styleWithCSS', 0, true);
+          });
+        }
       }
 
       // History
