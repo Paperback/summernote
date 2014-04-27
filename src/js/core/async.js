@@ -1,4 +1,4 @@
-define('core/async', function () {
+define(['core/async', 'core/document'], function (documents) {
   /**
    * Async functions which returns `Promise`
    */
@@ -37,7 +37,7 @@ define('core/async', function () {
           deferred.reject($(this));
         }).css({
           display: 'none'
-        }).appendTo(document.body).attr('src', sUrl);
+        }).appendTo(documents.usingDocument.body).attr('src', sUrl);
       }).promise();
     };
 

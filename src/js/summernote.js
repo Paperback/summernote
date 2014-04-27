@@ -77,7 +77,7 @@ define([
             info.codable.data('cmEditor').save();
           }
           
-          return bCodeview ? info.codable.val() : dom.html();
+          return bCodeview ? info.codable.val() : dom.html(info.editable);
         }
         return $holder.html();
       }
