@@ -1,4 +1,4 @@
-define(['core/iframe', 'core/dom'], function (iframe, dom) {
+define(['summernote/core/iframe', 'summernote/core/dom'], function (iframe, dom) {
   var documents = (function () {
 
     var setDocument = function (editable) {

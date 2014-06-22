@@ -1,4 +1,4 @@
-define('summernote/core/async', function () {
+define(['summernote/core/async', 'summernote/core/document'], function (sync, documents) {
   /**
    * Async functions which returns `Promise`
    */

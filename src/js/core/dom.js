@@ -1,4 +1,5 @@
-define(['summernote/core/func', 'summernote/core/list', 'summernote/core/agent'], function (func, list, agent) {
+define(['summernote/core/func', 'summernote/core/list',
+'summernote/core/agent', 'summernote/core/document', 'summernote/core/iframe'], function (func, list, agent, documents, iframe) {
   /**
    * Dom functions
    */

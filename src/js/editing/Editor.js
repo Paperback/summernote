@@ -1,7 +1,7 @@
 define([
   'summernote/core/agent', 'summernote/core/dom', 'summernote/core/range',
-  'summernote/core/async', 'summernote/editing/Style', 'summernote/editing/Table'
-], function (agent, dom, range, async, Style, Table) {
+  'summernote/core/async', 'summernote/core/document', 'summernote/editing/Style', 'summernote/editing/Table'
+], function (agent, dom, range, async, documents, Style, Table) {
   /**
    * Editor
    * @class
